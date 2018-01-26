@@ -12,7 +12,7 @@ This plugin is a fork of [vimeo/babel-plugin-transform-i18n](https://github.com/
 {
     "plugins": [
         ["transform-i18n", {
-            "dictionary": {
+            "translations": {
                 "Hello": "Bonjour",
                 "Hello, {name}!": "Bonjour, {name}!"
             }
@@ -57,8 +57,8 @@ npm install babel-plugin-transform-i18n --save
 {
     "plugins": [
         ["transform-i18n", {
-            "functionName": "t",
-            "dictionary": {}
+            "tagName": "t",
+            "translations": "path/to/translations.json"
         }]
     ]
 }
@@ -70,8 +70,8 @@ npm install babel-plugin-transform-i18n --save
 require('babel-core').transform('code', {
     plugins: [
         ['transform-i18n', {
-            functionName: 't',
-            dictionary: {}
+            tagName: 't',
+            translations: "path/to/translations.json"
         }]
     ]
 });
@@ -81,10 +81,10 @@ require('babel-core').transform('code', {
 
 There are two options available, both are optional:
 
-### `dictionary`
+### `translations`
 
-A mapping of the strings passed to the translation function to their translated versions. If no dictionary is passed, calls to the translation function will be replaced with the original string.
+A mapping of the strings passed to the translation function to their translated versions. It can also be the path to json file. If no translations is passed, calls to the translation function will be replaced with the original string.
 
-### `functionName`
+### `tagName`
 
 The name of the tag function that wraps the strings. Defaults to `t`.
