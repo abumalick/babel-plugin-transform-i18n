@@ -25,10 +25,8 @@ This plugin is a fork of [vimeo/babel-plugin-transform-i18n](https://github.com/
 
 ```js
 const name = 'Brad';
-const hello = t('Hello');
-const helloWithName = t('Hello, {name}!', {
-    name
-})
+const hello = t`Hello`;
+const helloWithName = t`Hello, {name}!`;
 ```
 
 **Out**
@@ -42,7 +40,13 @@ const helloWithName = 'Bonjour, ' + name + '!';
 ## Installation
 
 ```bash
-npm install babel-plugin-transform-i18n
+yarn add babel-plugin-transform-i18n
+```
+
+or with npm
+
+```bash
+npm install babel-plugin-transform-i18n --save
 ```
 
 ## Usage
@@ -83,4 +87,4 @@ A mapping of the strings passed to the translation function to their translated 
 
 ### `functionName`
 
-The name of the function that wraps the strings. Defaults to `t`.
+The name of the tag function that wraps the strings. Defaults to `t`.
