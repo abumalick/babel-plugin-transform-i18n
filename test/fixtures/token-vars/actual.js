@@ -1,4 +1,2 @@
 var name = 'Brad';
-var hello = t('Hello, {name}!', {
-    name
-});
+var hello = t`Hello, ${name}!`;

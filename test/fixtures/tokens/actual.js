@@ -1,3 +1,1 @@
-var hello = t('Hello, {name}!', {
-    name: 'Brad'
-});
+var hello = t`Hello, ${'Brad'}!`;

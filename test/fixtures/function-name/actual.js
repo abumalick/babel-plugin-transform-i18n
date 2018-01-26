@@ -1,1 +1,1 @@
-var hello = __('hello');
+var hello = __`hello`;

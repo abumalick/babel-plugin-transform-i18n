@@ -1,3 +1,2 @@
-var hello = t('{name}, welcome!', {
-    name: 'Brad'
-});
+const name = 'Brad';
+var hello = t`${name}, welcome!`;

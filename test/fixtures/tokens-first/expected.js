@@ -1,1 +1,2 @@
-var hello = 'Brad, welcome!';
+const name = 'Brad';
+var hello = name + ', welcome!';
