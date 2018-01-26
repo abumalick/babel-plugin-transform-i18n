@@ -9,12 +9,12 @@ module.exports = function({ types: t }) {
         },
         visitor: {
             TaggedTemplateExpression(path, state) {
-                const translationFunctionName = state.opts.functionName || 't';
-                if (t.isIdentifier(path.node.tag) && path.node.tag.name === translationFunctionName) {
+                const translationTagName = state.opts.tagName || 't';
+                if (t.isIdentifier(path.node.tag) && path.node.tag.name === translationTagName) {
                     if (!this.translations) {
-                        if (typeof state.opts.dictionary === 'string') {
+                        if (typeof state.opts.translations === 'string') {
                             try {
-                                const translationsFile = nodejsPath.resolve(process.cwd(), state.opts.dictionary);
+                                const translationsFile = nodejsPath.resolve(process.cwd(), state.opts.translations);
                                 console.log(`Reading: ${translationsFile} ...`);
                                 this.translations = JSON.parse(fs.readFileSync(translationsFile, 'utf-8'));
                                 console.log('Successfully imported translations.');
@@ -25,7 +25,7 @@ module.exports = function({ types: t }) {
                             }
                         }
                         else {
-                            this.translations = state.opts.dictionary || {};
+                            this.translations = state.opts.translations || {};
                         }
                     }
                     const { quasi } = path.node;
