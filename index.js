@@ -1,62 +1,32 @@
+// inspiration from original plugin and https://github.com/babel/babel/blob/1215db2dd3a6f1c13b2b446f05a2b55791c7a2a6/packages/babel-plugin-transform-es2015-template-literals/src/index.js
+
 module.exports = function({ types: t }) {
-    function getNodeForValue(value, tokens) {
-        if (value.match(/^\{.*?\}$/) && tokens[value]) {
-            return tokens[value];
-        }
-
-        return t.stringLiteral(value);
-    }
-
     return {
         visitor: {
-            CallExpression(path, state) {
+            TaggedTemplateExpression(path, state) {
                 const translationFunctionName = state.opts.functionName || 't';
-                const dictionary = state.opts.dictionary || {};
-
-                if (t.isIdentifier(path.node.callee) && path.node.callee.name === translationFunctionName) {
-                    let string = path.node.arguments[0].extra.rawValue;
-
-                    if (dictionary[string]) {
-                        string = dictionary[string];
-                    }
-
-                    if (path.node.arguments.length > 1 && t.isObjectExpression(path.node.arguments[1])) {
-                        const tokens = path.node.arguments[1].properties.reduce((previous, current) => {
-                            previous[`{${current.key.name}}`] = current.value;
-                            return previous;
-                        }, {});
-
-                        const replacementNode = string.split(/(\{.*?\})/g).filter((component) => {
-                            return component !== '';
-                        }).reduce((previous, current, i) => {
-                            if (i === 1) {
-                                previous = getNodeForValue(previous, tokens);
+                if (t.isIdentifier(path.node.tag) && path.node.tag.name === translationFunctionName) {
+                    const dictionary = state.opts.dictionary || {};
+                    const { quasi } = path.node;
+                    const { expressions, quasis } = quasi;
+                    const nodes = [];
+                    quasis.forEach((templateElement, index) => {
+                        const cooked = templateElement.value.cooked;
+                        if (cooked) {
+                            nodes.push(t.stringLiteral(dictionary[cooked] || cooked));
+                        }
+                        if (index < expressions.length) {
+                            const expr = expressions[index];
+                            if (!t.isStringLiteral(expr, { value: '' })) {
+                                nodes.push(expr);
                             }
-
-                            const currentNode = getNodeForValue(current, tokens);
-
-                            if (t.isStringLiteral(currentNode)) {
-                                // If the previous node is a StringLiteral, return a combined StringLiteral
-                                if (t.isStringLiteral(previous)) {
-                                    return t.stringLiteral(`${previous.value}${currentNode.value}`);
-                                }
-
-                                // If the previous node is a BinaryExpression with a StringLiteral on the right side,
-                                // update the BinaryExpression to have a combined StringLiteral on the right
-                                if (t.isBinaryExpression(previous) && t.isStringLiteral(previous.right)) {
-                                    previous.right = t.stringLiteral(`${previous.right.value}${currentNode.value}`);
-                                    return previous;
-                                }
-                            }
-
-                            return t.binaryExpression('+', previous, currentNode);
-                        });
-
-                        path.replaceWith(replacementNode);
-                        return;
+                        }
+                    });
+                    let root = nodes[0];
+                    for (let i = 1; i < nodes.length; i++) {
+                        root = t.binaryExpression('+', root, nodes[i]);
                     }
-
-                    path.replaceWith(t.stringLiteral(string));
+                    path.replaceWith(root);
                 }
             }
         }
