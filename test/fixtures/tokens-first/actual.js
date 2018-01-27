@@ -1,2 +1,2 @@
 const name = 'Brad';
-var hello = t`${name}, welcome!`;
+var hello = t`Welcome ${name}!`;

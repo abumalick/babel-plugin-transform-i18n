@@ -1,2 +1,2 @@
 const name = 'Brad';
-var hello = name + ', welcome!';
+var hello = name + ', bienvenue';

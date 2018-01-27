@@ -1,2 +1,2 @@
 var name = 'Brad';
-var hello = t`${greeting}, ${name}! ${ending}${dot}`;
+var hello = t`${greeting}, ${name}! ${ending}${another}`;
