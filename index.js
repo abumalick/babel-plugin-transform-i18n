@@ -2,35 +2,61 @@
 const nodejsPath = require('path');
 const fs = require('fs');
 
+const CHECK_DELAY = 3000;
+
 const escape = (s) => {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
+
+function getModifiedTime(filePath, prevMtimeMs) {
+    try {
+        const stats = fs.statSync(filePath);
+        if (stats) {
+            return stats.mtimeMs;
+        }
+    }
+    catch (err) {
+        console.error(err.message);
+    }
+    return false;
+}
+function loadTranslations(translationsPath) {
+    try {
+        const translationsFile = nodejsPath.resolve(process.cwd(), translationsPath);
+        console.log(`Reading: ${translationsFile} ...`);
+        return JSON.parse(fs.readFileSync(translationsFile, 'utf-8'));
+    }
+    catch (err) {
+        console.error(err.message);
+    }
+    return {};
+}
 
 module.exports = function({ types: t }) {
     return {
         pre() {
             this.translations = undefined;
+            this.lastModifiedTime = undefined;
+            this.lastChecked = undefined;
         },
         visitor: {
             TaggedTemplateExpression(path, state) {
                 const translationTagName = state.opts.tagName || 't';
                 if (t.isIdentifier(path.node.tag) && path.node.tag.name === translationTagName) {
-                    // import translations
-                    if (!this.translations) {
-                        if (typeof state.opts.translations === 'string') {
-                            try {
-                                const translationsFile = nodejsPath.resolve(process.cwd(), state.opts.translations);
-                                console.log(`Reading: ${translationsFile} ...`);
-                                this.translations = JSON.parse(fs.readFileSync(translationsFile, 'utf-8'));
+                    if (typeof state.opts.translations === 'string') {
+                        // import translations
+                        const now = Date.now();
+                        if (!this.lastChecked || now > this.lastChecked + CHECK_DELAY) {
+                            const modifiedTime = getModifiedTime(state.opts.translations);
+                            if (!this.lastChecked || (modifiedTime && modifiedTime > this.lastModifiedTime)) {
+                                this.translations = loadTranslations(state.opts.translations);
                             }
-                            catch (err) {
-                                this.translations = {};
-                                console.warn(err.message);
-                            }
+                            this.lastChecked = now;
+                            this.lastModifiedTime = modifiedTime;
                         }
-                        else {
-                            this.translations = state.opts.translations || {};
-                        }
+                    }
+                    else {
+                        this.translations = state.opts.translations || {};
                     }
 
                     const { quasi } = path.node;
