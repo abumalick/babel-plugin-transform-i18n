@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-transform-i18n",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A Babel transform plugin to replace strings with their translations.",
   "license": "MIT",
   "author": "Brad Dougherty <brad@vimeo.com>",
