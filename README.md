@@ -1,5 +1,7 @@
 # babel-plugin-transform-i18n [![Build Status](https://travis-ci.org/abumalick/babel-plugin-transform-i18n.svg?branch=master)](https://travis-ci.org/abumalick/babel-plugin-transform-i18n) [![codecov](https://codecov.io/gh/abumalick/babel-plugin-transform-i18n/branch/master/graph/badge.svg)](https://codecov.io/gh/abumalick/babel-plugin-transform-i18n) [![npm](https://img.shields.io/npm/v/babel-plugin-transform-i18n.svg?maxAge=2592000)](https://www.npmjs.com/package/babel-plugin-transform-i18n)
 
+# This plugin is not maintained, you should take a look at this one: https://github.com/vinhlh/tagged-translations
+
 A [Babel](https://babeljs.io) transform plugin to replace strings with their translations.
 
 This plugin is a fork of [vimeo/babel-plugin-transform-i18n](https://github.com/vimeo/babel-plugin-transform-i18n)
@@ -11,12 +13,15 @@ This plugin is a fork of [vimeo/babel-plugin-transform-i18n](https://github.com/
 ```json
 {
     "plugins": [
-        ["transform-i18n", {
-            "translations": {
-                "Hello": "Bonjour",
-                "Hello, #1#!": "Bonjour, #1#!"
+        [
+            "transform-i18n",
+            {
+                "translations": {
+                    "Hello": "Bonjour",
+                    "Hello, #1#!": "Bonjour, #1#!"
+                }
             }
-        }]
+        ]
     ]
 }
 ```
@@ -56,12 +61,15 @@ npm install babel-plugin-transform-i18n --save
 ```json
 {
     "plugins": [
-        ["transform-i18n", {
-            "translations": "path/to/translations.json",
-            "preToken": "#",
-            "postToken": "#",
-            "tagName": "t"
-        }]
+        [
+            "transform-i18n",
+            {
+                "translations": "path/to/translations.json",
+                "preToken": "#",
+                "postToken": "#",
+                "tagName": "t"
+            }
+        ]
     ]
 }
 ```
@@ -71,17 +79,21 @@ npm install babel-plugin-transform-i18n --save
 ```js
 require('babel-core').transform('code', {
     plugins: [
-        ['transform-i18n', {
-            tagName: 't',
-            translations: "path/to/translations.json"
-        }]
-    ]
+        [
+            'transform-i18n',
+            {
+                tagName: 't',
+                translations: 'path/to/translations.json',
+            },
+        ],
+    ],
 });
 ```
 
 ## Options
 
 There are two options available, both are optional:
+
 ### `preToken` and `postToken`
 
 String to identify the token. Default is `#` for both. It permit to include variables in translation: `"Hello, #1#!": "Bonjour, #1#!"`.
@@ -89,7 +101,6 @@ String to identify the token. Default is `#` for both. It permit to include vari
 ### `translations`
 
 A mapping of the strings passed to the translation function to their translated versions. It can also be the path to json file. If no translations is passed, calls to the translation function will be replaced with the original string.
-
 
 ### `tagName`
 
